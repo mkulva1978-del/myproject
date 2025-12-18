@@ -10,5 +10,5 @@ for i in range (len(experimentaldata)):
         danger[i]=1
     if experimentaldata[i] > crit+st1 and experimentaldata[i] < crit + st2:
         danger[i]=2
-
+#расчёт значений времени для прямого сигнала t1 и отраженного t2
 
