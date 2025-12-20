@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 from scipy import integrate
 
@@ -5,7 +7,7 @@ y0 = 0.1
 k = 0.1
 x0 = 1
 x1 = 30
-step = 1
+step = 5
 
 
 def compute_L(x):
@@ -65,7 +67,7 @@ y0 = 0.1
 k = 0.1
 x0 = 1
 x1 = 30
-step = 1
+step = 5
 
 
 def compute_L_rounded(x):
@@ -93,14 +95,42 @@ for x in x_values:
     difference = y_rounded - y_exact
 
 #расчёт значений времени для прямого сигнала t1 и отраженного t2
-def all_time(x):
+#сигналы снимаются каждый месяц то есть удлиненние численно равно скорости (всё в м)
+#координата крепления лининй (35, 35)
+def all_time(speeds):
     t1=[]
     c=300000
-    for j in y_values:
-        t1[j]=2*(50+y[j])/c
+    for speed in speeds:
+        t1.append(2*(50+speed/100)/c) #[t]=m*s/km
+    return t1
+def half_time(speeds):
+    t2=[]
+    c=300000
+    for speed in speeds:
+        t2.append(2*((35-speed)**2+(35-(math.log(speed, 0.5)+5))**2)**0.5/c)
+    return t2
+t1_values=all_time(y_values)
+t2_values=half_time(x_values)
+print(all_time(y_values))
+print(half_time(x_values))
+print(x_values)
+print(y_values)
 
+#график времени
+import matplotlib.pyplot as plt
 
+fig, (ax1) = plt.subplots(1, 1, figsize=(15, 5))
 
+#t1 и t2 от x_values
+ax1.plot(x_values, t1_values, 'bo-', linewidth=2, markersize=6, label='t1 (прямой сигнал)')
+ax1.plot(x_values, t2_values, 'rs-', linewidth=2, markersize=6, label='t2 (отраженный сигнал)')
+ax1.set_xlabel('x (скорость)', fontsize=12)
+ax1.set_ylabel('Время, с*м/км', fontsize=12)
+ax1.set_title('Время сигналов от координаты x', fontsize=14)
+ax1.legend()
+ax1.grid(True, alpha=0.3)
+ax1.ticklabel_format(axis='y', style='sci', scilimits=(-6,-6))
 
-
+plt.tight_layout()
+plt.show()
 
