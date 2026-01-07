@@ -100,14 +100,16 @@ for x in x_values:
 def all_time(speeds):
     t1=[]
     c=300000
+    all_long=50
     for speed in speeds:
-        t1.append(2*(50+speed/100)/c) #[t]=m*s/km
+        t1.append(2*(all_long+speed/100)/c) #[t]=m*s/km
     return t1
 def half_time(speeds):
     t2=[]
     c=300000
+    coord_o=35
     for speed in speeds:
-        t2.append(2*((35-speed)**2+(35-(math.log(speed, 0.5)+5))**2)**0.5/c)
+        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5/c)
     return t2
 t1_values=all_time(y_values)
 t2_values=half_time(x_values)
@@ -117,14 +119,14 @@ print(x_values)
 print(y_values)
 
 #график времени
-import matplotlib.pyplot as plt
+
 
 fig, (ax1) = plt.subplots(1, 1, figsize=(15, 5))
 
 #t1 и t2 от x_values
 ax1.plot(x_values, t1_values, 'bo-', linewidth=2, markersize=6, label='t1 (прямой сигнал)')
 ax1.plot(x_values, t2_values, 'rs-', linewidth=2, markersize=6, label='t2 (отраженный сигнал)')
-ax1.set_xlabel('x (скорость)', fontsize=12)
+ax1.set_xlabel('x, м', fontsize=12)
 ax1.set_ylabel('Время, с*м/км', fontsize=12)
 ax1.set_title('Время сигналов от координаты x', fontsize=14)
 ax1.legend()
