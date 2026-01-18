@@ -136,3 +136,24 @@ ax1.ticklabel_format(axis='y', style='sci', scilimits=(-6,-6))
 plt.tight_layout()
 plt.show()
 
+#создание следующего набора точек для смещения границы (результаты за следующий месяц)
+
+def all_time2(speeds):
+    t1=[]
+    c=300000
+    all_long=50
+    for speed in speeds:
+        t1.append(2*(all_long+2*speed/100)/c) #[t]=m*s/km
+    return t1
+def half_time2(speeds):
+    t2=[]
+    c=300000
+    coord_o=35
+    for speed in speeds:
+        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5/c)
+    return t2
+t1_values2=all_time(y_values)
+t2_values2=half_time(x_values)
+print(all_time2(y_values))
+print(half_time2(x_values))
+
