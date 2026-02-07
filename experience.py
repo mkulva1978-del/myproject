@@ -86,14 +86,6 @@ x_values = np.arange(x0, x1 + step, step)
 y_values_rounded = []
 
 
-for x in x_values:
-    L = compute_L_rounded(x)
-    y_exact = y0 + k * L
-    y_rounded = np.round(y_exact, 3)  # Округляем до 0.001
-    y_values_rounded.append(y_rounded)
-
-    difference = y_rounded - y_exact
-
 #расчёт значений времени для прямого сигнала t1 и отраженного t2
 #сигналы снимаются каждый месяц то есть удлиненние численно равно скорости (всё в м)
 #координата крепления лининй (35, 35)
@@ -102,14 +94,16 @@ def all_time(speeds):
     c=300000
     all_long=50
     for speed in speeds:
-        t1.append(2*(all_long+speed/100)/c) #[t]=m*s/km
+        #t1.append(2 * (all_long + speed / 100) / c)
+        t1.append(2*(all_long+speed/100)) #[t]=m*s/km
     return t1
 def half_time(speeds):
     t2=[]
     c=300000
     coord_o=35
     for speed in speeds:
-        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5/c)
+        #t2.append(2 * ((coord_o - speed) ** 2 + (coord_o - (math.log(speed, 0.5) + 30)) ** 2) ** 0.5 / c)
+        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
     return t2
 t1_values=all_time(y_values)
 t2_values=half_time(x_values)
@@ -143,14 +137,16 @@ def all_time2(speeds):
     c=300000
     all_long=50
     for speed in speeds:
-        t1.append(2*(all_long+2*speed/100)/c) #[t]=m*s/km
+        #t1.append(2*(all_long+speed/100)/c) #[t]=m*s/km
+        t1.append(2 * (all_long + speed / 100))
     return t1
 def half_time2(speeds):
     t2=[]
     c=300000
     coord_o=35
     for speed in speeds:
-        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5/c)
+       # t2.append(2 * ((coord_o - speed) ** 2 + (coord_o - (math.log(speed, 0.5) + 30)) ** 2) ** 0.5 / c)
+        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
     return t2
 t1_values2=all_time(y_values)
 t2_values2=half_time(x_values)

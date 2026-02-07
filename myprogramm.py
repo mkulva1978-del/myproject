@@ -1,5 +1,4 @@
 import math
-
 import experience
 #проверка опасности скорости движения точек границы
 def processing(t1):
@@ -7,7 +6,8 @@ def processing(t1):
     c=300000
     all_long=50
     for t in t1:
-        exp_value.append((t*c/2-all_long)*100)
+        #exp_value.append((t*c/2-all_long)*100)
+        exp_value.append((t / 2 - all_long) * 100)
     return exp_value
 experimentaldata=processing(experience.t1_values)
 danger = []
@@ -44,7 +44,8 @@ def radius_long(t2):
     radius=[]
     c=300000
     for t in t2:
-        radius.append(t*c/2)
+        #radius.append(t*c/2)
+        radius.append(t / 2)
     return radius
 radiuses_value=radius_long(experience.t2_values)
 print(radiuses_value)
@@ -118,7 +119,8 @@ def delta(t1):
     all_long=50
     c=300000
     for t in t1:
-        shifts.append(t*c-all_long)
+        #shifts.append(t*c-2*all_long)
+        shifts.append(t  - 2 * all_long)
     return shifts
 shifts=delta(experience.t1_values)
 print(radiuses_value)
