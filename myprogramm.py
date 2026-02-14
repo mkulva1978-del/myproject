@@ -1,4 +1,8 @@
 import math
+
+from fontTools.merge.util import current_time
+from matplotlib.pyplot import scatter
+
 import experience
 #проверка опасности скорости движения точек границы
 def processing(t1):
@@ -7,7 +11,7 @@ def processing(t1):
     all_long=50
     for t in t1:
         #exp_value.append((t*c/2-all_long)*100)
-        exp_value.append((t / 2 - all_long) * 100)
+        exp_value.append((t*c / 2 - all_long) * 100)
     return exp_value
 experimentaldata=processing(experience.t1_values)
 danger = []
@@ -45,7 +49,7 @@ def radius_long(t2):
     c=300000
     for t in t2:
         #radius.append(t*c/2)
-        radius.append(t / 2)
+        radius.append(t*c / 2)
     return radius
 radiuses_value=radius_long(experience.t2_values)
 print(radiuses_value)
@@ -64,7 +68,9 @@ print (border_x)
 print (border_y)
 
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 import numpy as np
+import time
 
 
 plt.figure(figsize=(8, 6))
@@ -80,7 +86,7 @@ plt.title('Координаты границы')
 plt.grid(True)
 plt.axis('equal')
 plt.tight_layout()
-plt.show()
+
 
 #сдвигаем точки для получения новой границы, будем сдвигать вдоль касательной на значние удлинения провода, затем создаём новый график
 from typing import List, Tuple
@@ -120,12 +126,14 @@ def delta(t1):
     c=300000
     for t in t1:
         #shifts.append(t*c-2*all_long)
-        shifts.append(t  - 2 * all_long)
+        shifts.append(-(t*c  - 2 * all_long))
     return shifts
 shifts=delta(experience.t1_values)
 print(radiuses_value)
 points = list(zip(border_x, border_y))
 shifted = new_points(points, shifts)
+
+
 
 #второй график
 new_border_x, new_border_y = zip(*shifted)
@@ -142,4 +150,59 @@ plt.title('Координаты новой границы')
 plt.grid(True)
 plt.axis('equal')
 plt.tight_layout()
+
+
+
+# следующий набор сдвигов (второй)
+shifts2=delta(experience.t1_values2)
+print(radiuses_value)
+points2 = list(zip(new_border_x, new_border_y))
+shifted2 = new_points(points2, shifts2)
+
+# график вторых сдвигов (третий)
+new_border_x2, new_border_y2 = zip(*shifted2)
+plt.figure(figsize=(8, 6))
+for i in range(len(new_border_x2)):
+    plt.scatter(new_border_x2[i], new_border_y2[i], c=colors[i], s=150,
+                edgecolors='black', linewidth=1.5, zorder=5,
+                label=f'Опасность {danger[i]}' if i == 0 else "")
+plt.plot(new_border_x2, new_border_y2, 'b-', alpha=0.7)
+plt.scatter([35], [35], c='blue', s=200, marker='*')
+plt.xlabel('X координата')
+plt.ylabel('Y координата')
+plt.title('Координаты новой границы2')
+plt.grid(True)
+plt.axis('equal')
+plt.tight_layout()
+
+
+
+#Делаем анимированный график со сдвигами
+
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.set_xlim(0, 40)
+ax.set_ylim(0, 40)
+ax.grid(True, alpha=0.7)
+ax.set_title('Движение границы')
+
+scatter = ax.scatter(border_x, border_y, c='blue', s=100)
+
+update_count = 0
+all_updates = 10
+last_update_time = time.time()
+
+
+def update(frame):
+    global border_x, border_y, last_update_time, update_count
+    current_time = time.time()
+    if current_time - last_update_time >= 2 and update_count < all_updates:
+        border_x = new_border_x
+        border_y = new_border_y
+        scatter.set_offsets(np.c_[border_x, border_y])
+        last_update_time = current_time
+        update_count += 1
+    return scatter,
+anim = FuncAnimation(fig, update, frames=None, interval=100, blit=True)
+
 plt.show()
+plt.close()

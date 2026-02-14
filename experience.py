@@ -3,7 +3,7 @@ import math
 import numpy as np
 from scipy import integrate
 
-y0 = 0.1
+y0 = 10
 k = 0.1
 x0 = 1
 x1 = 30
@@ -63,7 +63,7 @@ import matplotlib.pyplot as plt
 
 
 # Параметры
-y0 = 0.1
+y0 = 10
 k = 0.1
 x0 = 1
 x1 = 30
@@ -94,16 +94,16 @@ def all_time(speeds):
     c=300000
     all_long=50
     for speed in speeds:
-        #t1.append(2 * (all_long + speed / 100) / c)
-        t1.append(2*(all_long+speed/100)) #[t]=m*s/km
+        t1.append(2 * (all_long + speed / 100) / c)
+        #t1.append(2*(all_long+speed/100)) #[t]=m*s/km
     return t1
 def half_time(speeds):
     t2=[]
     c=300000
     coord_o=35
     for speed in speeds:
-        #t2.append(2 * ((coord_o - speed) ** 2 + (coord_o - (math.log(speed, 0.5) + 30)) ** 2) ** 0.5 / c)
-        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
+        t2.append(2 * ((coord_o - speed) ** 2 + (coord_o - (math.log(speed, 0.5) + 30)) ** 2) ** 0.5 / c)
+        #t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
     return t2
 t1_values=all_time(y_values)
 t2_values=half_time(x_values)
@@ -112,23 +112,6 @@ print(half_time(x_values))
 print(x_values)
 print(y_values)
 
-#график времени
-
-
-fig, (ax1) = plt.subplots(1, 1, figsize=(15, 5))
-
-#t1 и t2 от x_values
-ax1.plot(x_values, t1_values, 'bo-', linewidth=2, markersize=6, label='t1 (прямой сигнал)')
-ax1.plot(x_values, t2_values, 'rs-', linewidth=2, markersize=6, label='t2 (отраженный сигнал)')
-ax1.set_xlabel('x, м', fontsize=12)
-ax1.set_ylabel('Время, с*м/км', fontsize=12)
-ax1.set_title('Время сигналов от координаты x', fontsize=14)
-ax1.legend()
-ax1.grid(True, alpha=0.3)
-ax1.ticklabel_format(axis='y', style='sci', scilimits=(-6,-6))
-
-plt.tight_layout()
-plt.show()
 
 #создание следующего набора точек для смещения границы (результаты за следующий месяц)
 
@@ -137,19 +120,22 @@ def all_time2(speeds):
     c=300000
     all_long=50
     for speed in speeds:
-        #t1.append(2*(all_long+speed/100)/c) #[t]=m*s/km
-        t1.append(2 * (all_long + speed / 100))
+        t1.append(2*(all_long+speed/100)/c) #[t]=m*s/km
+        #t1.append(2 * (all_long + 2*speed / 100))
     return t1
 def half_time2(speeds):
     t2=[]
     c=300000
     coord_o=35
     for speed in speeds:
-       # t2.append(2 * ((coord_o - speed) ** 2 + (coord_o - (math.log(speed, 0.5) + 30)) ** 2) ** 0.5 / c)
-        t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
+       t2.append(2 * ((coord_o - speed) ** 2 + (coord_o - (math.log(speed, 0.5) + 30)) ** 2) ** 0.5 / c)
+        #t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
     return t2
 t1_values2=all_time(y_values)
-t2_values2=half_time(x_values)
+import myprogramm
+x_values2=myprogramm.new_border_x
+t2_values2=half_time(x_values2)
 print(all_time2(y_values))
-print(half_time2(x_values))
+print(half_time2(x_values2))
+
 
