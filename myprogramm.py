@@ -1,5 +1,7 @@
 import math
 
+import matplotlib
+matplotlib.use('TkAgg')
 from fontTools.merge.util import current_time
 from matplotlib.pyplot import scatter
 
@@ -71,21 +73,21 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 import time
+plt.close('all')
 
-
-plt.figure(figsize=(8, 6))
-for i in range(len(border_x)):
-    plt.scatter(border_x[i], border_y[i], c=colors[i], s=150,
-                edgecolors='black', linewidth=1.5, zorder=5,
-                label=f'Опасность {danger[i]}' if i == 0 else "")
-plt.plot(border_x, border_y, 'b-', alpha=0.7)
-plt.scatter([35], [35], c='blue', s=200, marker='*')
-plt.xlabel('X координата')
-plt.ylabel('Y координата')
-plt.title('Координаты границы')
-plt.grid(True)
-plt.axis('equal')
-plt.tight_layout()
+# plt.figure(figsize=(8, 6))
+# for i in range(len(border_x)):
+#     plt.scatter(border_x[i], border_y[i], c=colors[i], s=150,
+#                 edgecolors='black', linewidth=1.5, zorder=5,
+#                 label=f'Опасность {danger[i]}' if i == 0 else "")
+# plt.plot(border_x, border_y, 'b-', alpha=0.7)
+# plt.scatter([35], [35], c='blue', s=200, marker='*')
+# plt.xlabel('X координата')
+# plt.ylabel('Y координата')
+# plt.title('Координаты границы')
+# plt.grid(True)
+# plt.axis('equal')
+# plt.tight_layout()
 
 
 #сдвигаем точки для получения новой границы, будем сдвигать вдоль касательной на значние удлинения провода, затем создаём новый график
@@ -120,15 +122,15 @@ def new_points(points: List[Tuple[float, float]],
 
     return list(zip(new_x, new_y))
 #чтобы получить значения сдвига нужно использовать значения t1
-def delta(t1):
+def delta(t1, all_long):
     shifts=[]
-    all_long=50
     c=300000
     for t in t1:
         #shifts.append(t*c-2*all_long)
         shifts.append(-(t*c  - 2 * all_long))
     return shifts
-shifts=delta(experience.t1_values)
+all_long=50
+shifts=delta(experience.t1_values, all_long)
 print(radiuses_value)
 points = list(zip(border_x, border_y))
 shifted = new_points(points, shifts)
@@ -137,43 +139,43 @@ shifted = new_points(points, shifts)
 
 #второй график
 new_border_x, new_border_y = zip(*shifted)
-plt.figure(figsize=(8, 6))
-for i in range(len(new_border_x)):
-    plt.scatter(new_border_x[i], new_border_y[i], c=colors[i], s=150,
-                edgecolors='black', linewidth=1.5, zorder=5,
-                label=f'Опасность {danger[i]}' if i == 0 else "")
-plt.plot(new_border_x, new_border_y, 'b-', alpha=0.7)
-plt.scatter([35], [35], c='blue', s=200, marker='*')
-plt.xlabel('X координата')
-plt.ylabel('Y координата')
-plt.title('Координаты новой границы')
-plt.grid(True)
-plt.axis('equal')
-plt.tight_layout()
+# plt.figure(figsize=(8, 6))
+# for i in range(len(new_border_x)):
+#     plt.scatter(new_border_x[i], new_border_y[i], c=colors[i], s=150,
+#                 edgecolors='black', linewidth=1.5, zorder=5,
+#                 label=f'Опасность {danger[i]}' if i == 0 else "")
+# plt.plot(new_border_x, new_border_y, 'b-', alpha=0.7)
+# plt.scatter([35], [35], c='blue', s=200, marker='*')
+# plt.xlabel('X координата')
+# plt.ylabel('Y координата')
+# plt.title('Координаты новой границы')
+# plt.grid(True)
+# plt.axis('equal')
+# plt.tight_layout()
 
 
 
 # следующий набор сдвигов (второй)
-shifts2=delta(experience.t1_values2)
-print(radiuses_value)
-points2 = list(zip(new_border_x, new_border_y))
-shifted2 = new_points(points2, shifts2)
+# shifts2=delta(experience.t1_values2)
+# print(radiuses_value)
+# points2 = list(zip(new_border_x, new_border_y))
+# shifted2 = new_points(points2, shifts2)
 
-# график вторых сдвигов (третий)
-new_border_x2, new_border_y2 = zip(*shifted2)
-plt.figure(figsize=(8, 6))
-for i in range(len(new_border_x2)):
-    plt.scatter(new_border_x2[i], new_border_y2[i], c=colors[i], s=150,
-                edgecolors='black', linewidth=1.5, zorder=5,
-                label=f'Опасность {danger[i]}' if i == 0 else "")
-plt.plot(new_border_x2, new_border_y2, 'b-', alpha=0.7)
-plt.scatter([35], [35], c='blue', s=200, marker='*')
-plt.xlabel('X координата')
-plt.ylabel('Y координата')
-plt.title('Координаты новой границы2')
-plt.grid(True)
-plt.axis('equal')
-plt.tight_layout()
+# # график вторых сдвигов (третий)
+# new_border_x2, new_border_y2 = zip(*shifted2)
+# plt.figure(figsize=(8, 6))
+# for i in range(len(new_border_x2)):
+#     plt.scatter(new_border_x2[i], new_border_y2[i], c=colors[i], s=150,
+#                 edgecolors='black', linewidth=1.5, zorder=5,
+#                 label=f'Опасность {danger[i]}' if i == 0 else "")
+# plt.plot(new_border_x2, new_border_y2, 'b-', alpha=0.7)
+# plt.scatter([35], [35], c='blue', s=200, marker='*')
+# plt.xlabel('X координата')
+# plt.ylabel('Y координата')
+# plt.title('Координаты новой границы2')
+# plt.grid(True)
+# plt.axis('equal')
+# plt.tight_layout()
 
 
 
@@ -186,23 +188,99 @@ ax.grid(True, alpha=0.7)
 ax.set_title('Движение границы')
 
 scatter = ax.scatter(border_x, border_y, c='blue', s=100)
+line, = ax.plot(border_x, border_y, 'b-', alpha=0.7)
 
 update_count = 0
 all_updates = 10
 last_update_time = time.time()
 
 
+# def update(frame):
+#     global border_x, border_y, last_update_time, update_count
+#     current_time = time.time()
+#     if current_time - last_update_time >= 2 and update_count < all_updates:
+#         border_x = new_border_x
+#         border_y = new_border_y
+#         scatter.set_offsets(np.c_[border_x, border_y])
+#         last_update_time = current_time
+#         update_count += 1
+#     return scatter,
+# anim = FuncAnimation(fig, update, frames=None, interval=100, blit=True)
 def update(frame):
-    global border_x, border_y, last_update_time, update_count
-    current_time = time.time()
-    if current_time - last_update_time >= 2 and update_count < all_updates:
-        border_x = new_border_x
-        border_y = new_border_y
-        scatter.set_offsets(np.c_[border_x, border_y])
-        last_update_time = current_time
-        update_count += 1
-    return scatter,
-anim = FuncAnimation(fig, update, frames=None, interval=100, blit=True)
+    global border_x, border_y, update_count
+    if update_count < all_updates:
+        t = frame / 10.0
+        
+        current_x = [border_x[i] + t * (new_border_x[i] - border_x[i]) 
+                    for i in range(len(border_x))]
+        current_y = [border_y[i] + t * (new_border_y[i] - border_y[i]) 
+                    for i in range(len(border_y))]
+        
+        scatter.set_offsets(np.c_[current_x, current_y])
+        line.set_data(current_x, current_y)
+        
+        if frame >= 10:
+            update_count += 1
+    return scatter, line
 
+anim = FuncAnimation(fig, update, frames=range(11), interval=200, blit=True, repeat=True)
+
+plt.tight_layout()
 plt.show()
-plt.close()
+
+#получим сразу 10 положений точек для соответственно 10и снятых экспериментально наборов t1 (которые характеризуют сдвиги)
+def new_points(points: List[Tuple[float, float]],
+              shifts: List[float]) -> List[Tuple[float, float]]:
+    x = np.array([p[0] for p in points])
+    y = np.array([p[1] for p in points])
+    s = np.array(shifts)
+
+    n = len(points)
+    derivatives = np.zeros(n)
+
+    for i in range(1, n - 1):
+        dx = x[i + 1] - x[i - 1]
+        dy = y[i + 1] - y[i - 1]
+        if dx != 0:
+            derivatives[i] = dy / dx
+
+    if x[1] - x[0] != 0:
+        derivatives[0] = (y[1] - y[0]) / (x[1] - x[0])
+
+    if x[-1] - x[-2] != 0:
+        derivatives[-1] = (y[-1] - y[-2]) / (x[-1] - x[-2])
+
+    tangent_lengths = np.sqrt(1 + derivatives ** 2)
+    unit_dx = 1/tangent_lengths
+    unit_dy = derivatives / tangent_lengths
+
+    new_x = x - s * unit_dx
+    new_y = y - s * unit_dy
+
+    return list(zip(new_x, new_y))
+
+def delta(t1, all_long):
+    c = 300000
+    return [-(t*c - 2 * all_long) for t in t1]
+initial_points = list(zip(border_x, border_y))
+all_points_sets = [initial_points]
+all_points_sets_with_all_long = [] 
+
+current_all_long = 50
+all_points_sets_with_all_long.append(current_all_long)
+
+for iteration in range(10):
+
+    t1_values = []
+    for i in range(7):
+        value = float(input(f"t1_{i+1}: "))
+        t1_values.append(value)
+
+    shifts = delta(t1_values, current_all_long)
+    prev_points = all_points_sets[-1]
+    new_set = new_points(prev_points, shifts)
+    all_points_sets.append(new_set)
+    avg_shift = np.mean(shifts)
+    current_all_long += avg_shift
+    all_points_sets_with_all_long.append(current_all_long)
+    

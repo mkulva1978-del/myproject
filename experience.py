@@ -132,10 +132,10 @@ def half_time2(speeds):
         #t2.append(2*((coord_o-speed)**2+(coord_o-(math.log(speed, 0.5)+30))**2)**0.5)
     return t2
 t1_values2=all_time(y_values)
-import myprogramm
-x_values2=myprogramm.new_border_x
-t2_values2=half_time(x_values2)
-print(all_time2(y_values))
-print(half_time2(x_values2))
+#import myprogramm
+#x_values2=myprogramm.new_border_x
+#t2_values2=half_time(x_values2)
+#print(all_time2(y_values))
+#print(half_time2(x_values2))
 
 
