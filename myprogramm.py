@@ -229,58 +229,264 @@ plt.tight_layout()
 plt.show()
 
 #получим сразу 10 положений точек для соответственно 10и снятых экспериментально наборов t1 (которые характеризуют сдвиги)
-def new_points(points: List[Tuple[float, float]],
-              shifts: List[float]) -> List[Tuple[float, float]]:
+# def new_points(points: List[Tuple[float, float]],
+#               shifts: List[float]) -> List[Tuple[float, float]]:
+#     x = np.array([p[0] for p in points])
+#     y = np.array([p[1] for p in points])
+#     s = np.array(shifts)
+#
+#     n = len(points)
+#     derivatives = np.zeros(n)
+#
+#     for i in range(1, n - 1):
+#         dx = x[i + 1] - x[i - 1]
+#         dy = y[i + 1] - y[i - 1]
+#         if dx != 0:
+#             derivatives[i] = dy / dx
+#
+#     if x[1] - x[0] != 0:
+#         derivatives[0] = (y[1] - y[0]) / (x[1] - x[0])
+#
+#     if x[-1] - x[-2] != 0:
+#         derivatives[-1] = (y[-1] - y[-2]) / (x[-1] - x[-2])
+#
+#     tangent_lengths = np.sqrt(1 + derivatives ** 2)
+#     unit_dx = 1/tangent_lengths
+#     unit_dy = derivatives / tangent_lengths
+#
+#     new_x = x - s * unit_dx
+#     new_y = y - s * unit_dy
+#
+#     return list(zip(new_x, new_y))
+#
+# def delta(t1, all_long):
+#     c = 300000
+#     return [-(t*c - 2 * all_long) for t in t1]
+# initial_points = list(zip(border_x, border_y))
+# all_points_sets = [initial_points]
+# all_points_sets_with_all_long = []
+#
+# first_all_long = 50
+# all_points_sets_with_all_long.append(first_all_long)
+#
+# for iteration in range(3):
+#
+#     t1_values = []
+#     for i in range(7):
+#         value = float(input(f"t1_{i+1}: "))
+#         t1_values.append(value)
+#
+#     shifts = delta(t1_values, first_all_long)
+#     prev_points = all_points_sets[-1]
+#     new_set = new_points(prev_points, shifts)
+#     all_points_sets.append(new_set)
+#     avg_shift = np.mean(shifts)
+#     first_all_long += avg_shift
+#     all_points_sets_with_all_long.append(first_all_long)
+
+
+import tkinter as tk
+from tkinter import simpledialog, messagebox
+
+
+def input_seven_numbers(iteration):
+    root = tk.Tk()
+    root.withdraw()
+
+    while True:
+        dialog = tk.Toplevel()
+        dialog.title(f"Ввод экспериментальных точек {iteration}")
+        dialog.geometry("400x200")
+
+        entry = tk.Entry(dialog, width=40, font=('Arial', 11))
+        entry.pack(pady=10)
+        entry.focus_set()
+
+        result = []
+
+        def submit():
+            nonlocal result
+            try:
+                text = entry.get().replace(' ', '')
+                numbers = text.split(',')
+
+                if len(numbers) != 7:
+                    messagebox.showerror("Ошибка", "Введите 7 значений")
+                    return
+
+                result = [float(x) for x in numbers]
+                dialog.destroy()
+
+            except ValueError:
+                messagebox.showerror("Ошибка", "Введены некорректные значния")
+
+        def cancel():
+            dialog.destroy()
+
+        btn_frame = tk.Frame(dialog)
+        btn_frame.pack(pady=20)
+
+        tk.Button(btn_frame, text="OK", command=submit,
+                  bg='#4CAF50', fg='white', width=10).pack(side=tk.LEFT, padx=5)
+        tk.Button(btn_frame, text="Отмена", command=cancel,
+                  bg='#f44336', fg='white', width=10).pack(side=tk.LEFT, padx=5)
+
+        dialog.wait_window()
+
+        if result:
+            return result
+
+numbers1 = input_seven_numbers(1)
+numbers2 = input_seven_numbers(2)
+numbers3 = input_seven_numbers(3)
+
+
+# from typing import List, Tuple
+# import numpy as np
+#
+#
+# def new_points(points: List[Tuple[float, float]],
+#                shifts: List[float]) -> List[Tuple[float, float]]:
+#     x = np.array([p[0] for p in points])
+#     y = np.array([p[1] for p in points])
+#     s = np.array(shifts)
+#
+#     n = len(points)
+#     derivatives = np.zeros(n)
+#
+#     for i in range(1, n - 1):
+#         dx = x[i + 1] - x[i - 1]
+#         dy = y[i + 1] - y[i - 1]
+#         if dx != 0:
+#             derivatives[i] = dy / dx
+#
+#     if x[1] - x[0] != 0:
+#         derivatives[0] = (y[1] - y[0]) / (x[1] - x[0])
+#
+#     if x[-1] - x[-2] != 0:
+#         derivatives[-1] = (y[-1] - y[-2]) / (x[-1] - x[-2])
+#
+#     tangent_lengths = np.sqrt(1 + derivatives ** 2)
+#     unit_dx = 1 / tangent_lengths
+#     unit_dy = derivatives / tangent_lengths
+#
+#     new_x = x - s * unit_dx
+#     new_y = y - s * unit_dy
+#
+#     return list(zip(new_x, new_y))
+#
+#
+# def delta(t1, all_long):
+#     c = 300000
+#     return [-(t * c - 2 * all_long) for t in t1]
+#
+# initial_points = list(zip(border_x, border_y))
+#
+# t1_arrays = [
+#     numbers1,  # первый набор
+#     numbers2,  # второй набор
+#     numbers3  # третий набор
+# ]
+#
+# all_points_sets = [initial_points]
+# all_points_sets_with_all_long = []
+#
+# first_all_long = 50
+# all_points_sets_with_all_long.append(first_all_long)
+#
+# for iteration in range(3):
+#     t1_values = t1_arrays[iteration]
+#
+#     shifts = delta(t1_values, first_all_long)
+#     prev_points = all_points_sets[-1]
+#     new_set = new_points(prev_points, shifts)
+#     all_points_sets.append(new_set)
+#     avg_shift = np.mean(shifts)
+#     first_all_long += avg_shift
+#     all_points_sets_with_all_long.append(first_all_long)
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from typing import List, Tuple
+
+
+def new_points(points: List[Tuple[float, float]], shifts: List[float]) -> List[Tuple[float, float]]:
     x = np.array([p[0] for p in points])
     y = np.array([p[1] for p in points])
     s = np.array(shifts)
 
-    n = len(points)
-    derivatives = np.zeros(n)
-
-    for i in range(1, n - 1):
+    derivatives = np.zeros(len(points))
+    for i in range(1, len(points) - 1):
         dx = x[i + 1] - x[i - 1]
-        dy = y[i + 1] - y[i - 1]
         if dx != 0:
-            derivatives[i] = dy / dx
-
+            derivatives[i] = (y[i + 1] - y[i - 1]) / dx
     if x[1] - x[0] != 0:
         derivatives[0] = (y[1] - y[0]) / (x[1] - x[0])
-
     if x[-1] - x[-2] != 0:
         derivatives[-1] = (y[-1] - y[-2]) / (x[-1] - x[-2])
 
     tangent_lengths = np.sqrt(1 + derivatives ** 2)
-    unit_dx = 1/tangent_lengths
-    unit_dy = derivatives / tangent_lengths
-
-    new_x = x - s * unit_dx
-    new_y = y - s * unit_dy
-
+    new_x = x - s / tangent_lengths
+    new_y = y - s * derivatives / tangent_lengths
     return list(zip(new_x, new_y))
+
 
 def delta(t1, all_long):
     c = 300000
-    return [-(t*c - 2 * all_long) for t in t1]
+    return [-(t * c - 2 * all_long) for t in t1]
+
+
+
 initial_points = list(zip(border_x, border_y))
-all_points_sets = [initial_points]
-all_points_sets_with_all_long = [] 
 
-current_all_long = 50
-all_points_sets_with_all_long.append(current_all_long)
+t1_arrays = [
+    numbers1,  # первый набор
+    numbers2,  # второй набор
+    numbers3  # третий набор
+]
 
-for iteration in range(10):
+all_points = [initial_points]
+all_long = 50
 
-    t1_values = []
-    for i in range(7):
-        value = float(input(f"t1_{i+1}: "))
-        t1_values.append(value)
+for i in range(3):
+    shifts = delta(t1_arrays[i], all_long)
+    new_set = new_points(all_points[-1], shifts)
+    all_points.append(new_set)
+    all_long += np.mean(shifts)
 
-    shifts = delta(t1_values, current_all_long)
-    prev_points = all_points_sets[-1]
-    new_set = new_points(prev_points, shifts)
-    all_points_sets.append(new_set)
-    avg_shift = np.mean(shifts)
-    current_all_long += avg_shift
-    all_points_sets_with_all_long.append(current_all_long)
-    
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.set_xlim(5, 45)
+ax.set_ylim(5, 25)
+ax.grid(True, alpha=0.3)
+line, = ax.plot([], [], 'bo-', linewidth=2, markersize=8)
+title = ax.set_title('')
+
+
+def animate(frame):
+    t = frame / 50
+    idx = int(t)
+    alpha = t - idx
+
+    if idx >= 2:
+        points = all_points[3]
+    else:
+        p1 = all_points[idx]
+        p2 = all_points[idx + 1]
+        points = [(p1[i][0] * (1 - alpha) + p2[i][0] * alpha,
+                   p1[i][1] * (1 - alpha) + p2[i][1] * alpha) for i in range(7)]
+
+    x = [p[0] for p in points]
+    y = [p[1] for p in points]
+    line.set_data(x, y)
+    title.set_text(f'Набор {idx + 1} → {idx + 2}' if idx < 2 else 'Набор 3')
+    return line, title
+
+
+ani = animation.FuncAnimation(fig, animate, frames=150, interval=50, blit=True)
+plt.show()
+
+# 0.000334, 0.000344, 0.000354, 0.000364, 0.000354, 0.000344, 0.000334
+# 0.0003342, 0.0003442, 0.0003542, 0.0003642, 0.0003542, 0.0003442, 0.0003342
+# 0.0003344, 0.0003444, 0.0003544, 0.0003644, 0.0003544, 0.0003444, 0.0003344
