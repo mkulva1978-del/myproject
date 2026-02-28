@@ -6,51 +6,90 @@ from fontTools.merge.util import current_time
 from matplotlib.pyplot import scatter
 
 import experience
+c=300000
+
+numbers1 = experience.all_arrays[1]
+numbers2 = experience.all_arrays[2]
+numbers3 = experience.all_arrays[3]
+numbers4 = experience.all_arrays[4]
+numbers5 = experience.all_arrays[5]
+
+longs1 = [experience.L] * 7  
+longs2 = [experience.all_arrays[1][i] * c / 2 for i in range(7)]
+longs3 = [experience.all_arrays[2][i] * c / 2 for i in range(7)]
+longs4 = [experience.all_arrays[3][i] * c / 2 for i in range(7)]
+longs5 = [experience.all_arrays[4][i] * c / 2 for i in range(7)]
+
+t1_arrays = [
+    numbers1,  # массив 1
+    numbers2,  # массив 2  
+    numbers3,  # массив 3
+    numbers4,  # массив 4
+    numbers5   # массив 5
+]
+all_longs = [
+    longs1,
+    longs2,
+    longs3,
+    longs4,
+    longs5,
+]
 #проверка опасности скорости движения точек границы
-def processing(t1):
+def processing(t1, longs):
     exp_value=[]
-    c=300000
-    all_long=50
-    for t in t1:
-        #exp_value.append((t*c/2-all_long)*100)
-        exp_value.append((t*c / 2 - all_long) * 100)
+    for t, long in zip(t1, longs):
+        exp_value.append(t*c / 2 - long)
     return exp_value
-experimentaldata=processing(experience.all_arrays[0])
-danger = []
+
+
+all_dangers = []  
+all_colors = []  
+
 crit = 1
 st1 = 1
 st2 = 2
-for i in range (len(experimentaldata)):
-    if experimentaldata[i] < crit:
-        danger.append(0)
-    if experimentaldata[i] > crit and experimentaldata[i] < crit + st1:
-        danger.append(1)
-    if experimentaldata[i] > crit+st1 and experimentaldata[i] < crit + st2:
-        danger.append(2)
-    if experimentaldata[i] > crit + st2:
-        danger.append(3)
-print (danger)
-#на графике будем отмечать шнуры разными цветами взависимости от опасности
-colors = []
-for d in danger:
-    if d == 0:
-        colors.append('green')
-    elif d == 1:
-        colors.append('yellow')
-    elif d == 2:
-        colors.append('orange')
-    elif d == 3:
-        colors.append('red')
+
+for array_idx in range(1, 6):  
+    experimentaldata = processing(experience.all_arrays[array_idx], all_longs[array_idx-1])
+    
+    danger = []
+    for value in experimentaldata:
+        if value < crit:
+            danger.append(0)
+        elif value < crit + st1:
+            danger.append(1)
+        elif value < crit + st2:
+            danger.append(2)
+        else:
+            danger.append(3)
+    
+    all_dangers.append(danger)
+
+    colors = []
+    for d in danger:
+        if d == 0:
+            colors.append('green')
+        elif d == 1:
+            colors.append('yellow')
+        elif d == 2:
+            colors.append('orange')
+        elif d == 3:
+            colors.append('red')
+    all_colors.append(colors)
+    
+    print(f"Опасность для массива {array_idx+1}: {danger}")
+    print(f"Цвета для массива {array_idx+1}: {colors}")
+    print("-" * 30)
 
 #поиск графического описания границы
 #пусть 7 шнуров протянуты под углами 0, pi/12, pi/6, pi/4, pi/3, pi*5/12, pi/2
 #нужно использовтать значения времени t2, чтобы получить длину радиус-вектора
+coord_o = float(input("Введите координаты x=y точки крепления шнуров: "))
 degrees=[0, math.pi/12, math.pi/6, math.pi/4, math.pi/3, math.pi*5/12, math.pi/2]
 def radius_long(t2):
     radius=[]
     c=300000
     for t in t2:
-        #radius.append(t*c/2)
         radius.append(t*c / 2)
     return radius
 radiuses_value=radius_long(experience.all_arrays[0])
@@ -59,7 +98,6 @@ def border_coordinates(radiuses):
     x_coord=[]
     y_coord=[]
     c=300000
-    coord_o=35
     for r, d in zip(radiuses, degrees):
         x_coord.append(coord_o-r*math.cos(d))
         y_coord.append(coord_o-r*math.sin(d))
@@ -69,69 +107,7 @@ border_x, border_y = border_coordinates(radiuses_value)
 print (border_x)
 print (border_y)
 
-
-
-import tkinter as tk
-from tkinter import simpledialog, messagebox
-
-
-def input_seven_numbers(iteration):
-    root = tk.Tk()
-    root.withdraw()
-
-    while True:
-        dialog = tk.Toplevel()
-        dialog.title(f"Ввод экспериментальных точек {iteration}")
-        dialog.geometry("400x200")
-
-        entry = tk.Entry(dialog, width=40, font=('Arial', 11))
-        entry.pack(pady=10)
-        entry.focus_set()
-
-        result = []
-
-        def submit():
-            nonlocal result
-            try:
-                text = entry.get().replace(' ', '')
-                numbers = text.split(',')
-
-                if len(numbers) != 7:
-                    messagebox.showerror("Ошибка", "Введите 7 значений")
-                    return
-
-                result = [float(x) for x in numbers]
-                dialog.destroy()
-
-            except ValueError:
-                messagebox.showerror("Ошибка", "Введены некорректные значния")
-
-        def cancel():
-            dialog.destroy()
-
-        btn_frame = tk.Frame(dialog)
-        btn_frame.pack(pady=20)
-
-        tk.Button(btn_frame, text="OK", command=submit,
-                  bg='#4CAF50', fg='white', width=10).pack(side=tk.LEFT, padx=5)
-        tk.Button(btn_frame, text="Отмена", command=cancel,
-                  bg='#f44336', fg='white', width=10).pack(side=tk.LEFT, padx=5)
-
-        dialog.wait_window()
-
-        if result:
-            return result
-
-# numbers1 = input_seven_numbers(1)
-# numbers2 = input_seven_numbers(2)
-# numbers3 = input_seven_numbers(3)
-
  
-numbers1 = experience.all_arrays[1]
-numbers2 = experience.all_arrays[2]
-numbers3 = experience.all_arrays[3]
-numbers4 = experience.all_arrays[4]
-numbers5 = experience.all_arrays[5]
 
 
 
@@ -163,43 +139,25 @@ def new_points(points: List[Tuple[float, float]], shifts: List[float]) -> List[T
     return list(zip(new_x, new_y))
 
 
-def delta(t1, all_long):
+def delta(t1, longs):
     c = 300000
-    return [-t * c / 2 + all_long for t in t1]
+    return [-t * c / 2 + long for t, long in zip(t1, longs)]
 
 initial_points = list(zip(border_x, border_y))
 
-t1_arrays = [
-    numbers1,  # массив 1
-    numbers2,  # массив 2  
-    numbers3,  # массив 3
-    numbers4,  # массив 4
-    numbers5   # массив 5
-]
+
 
 all_points = [initial_points]  # начальное положение
-all_long0 = experience.L
-# all_long0=50
 
-# Для отладки - посмотрим, какие сдвиги получаются
-print(f"Начальная all_long: {all_long0}")
-print("-" * 50)
-
-# Делаем ровно 5 сдвигов (по одному на каждый массив)
 for i in range(5):
-    shifts = delta(t1_arrays[i], all_long0)
-    print(f"Сдвиг {i+1}:")
-    print(f"  Массив t1: {[round(t, 10) for t in t1_arrays[i]]}")
-    print(f"  Сдвиги (м): {[round(s, 6) for s in shifts]}")
-    print(f"  all_long до сдвига: {all_long0}")
+    shifts = delta(t1_arrays[i], all_longs[i])
+
     
     new_set = new_points(all_points[-1], shifts)
     all_points.append(new_set)
     
     
-    print(f"  all_long после сдвига: {all_long0}")
-    print(f"  Средний сдвиг: {np.mean(shifts)}")
-    print("-" * 50)
+   
 
 print(f"Создано наборов точек: {len(all_points)}")
 
@@ -220,13 +178,23 @@ for idx, points in enumerate(all_points):
 plt.tight_layout()
 plt.show()
 
-
 fig, ax = plt.subplots(figsize=(8, 6))
-ax.set_xlim(-50, 100)
-ax.set_ylim(-50, 100)
+ax.set_xlim(-50, 50)
+ax.set_ylim(-50, 50)
 ax.grid(True, alpha=0.3)
-line, = ax.plot([], [], 'bo-', linewidth=2, markersize=8)
+
+scat = ax.scatter([], [], c=[], s=100, edgecolors='black', linewidth=1.5, zorder=5)
+line, = ax.plot([], [], 'k-', linewidth=1.5, alpha=0.5, zorder=1)  
 title = ax.set_title('')
+
+from matplotlib.patches import Patch
+legend_elements = [
+    Patch(facecolor='green', edgecolor='black', label='Уровень 0 (безопасно)'),
+    Patch(facecolor='yellow', edgecolor='black', label='Уровень 1 (слабая опасность)'),
+    Patch(facecolor='orange', edgecolor='black', label='Уровень 2 (средняя опасность)'),
+    Patch(facecolor='red', edgecolor='black', label='Уровень 3 (высокая опасность)')
+]
+ax.legend(handles=legend_elements, loc='upper right', fontsize=8)
 
 
 frames_per_transition = 30
@@ -239,18 +207,23 @@ def animate(frame):
     if transition >= 5:
         points = all_points[5]
         title.set_text('Финальное положение')
+        current_colors = all_colors[4]  
     else:
         p1 = all_points[transition]
         p2 = all_points[transition + 1]
         points = [(p1[i][0] * (1 - alpha) + p2[i][0] * alpha,
                    p1[i][1] * (1 - alpha) + p2[i][1] * alpha) for i in range(7)]
         title.set_text(f'Сдвиг {transition + 1} из 5')
+        current_colors = all_colors[transition]
     
     x = [p[0] for p in points]
     y = [p[1] for p in points]
+    
+    scat.set_offsets(np.c_[x, y])
+    scat.set_color(current_colors)  
     line.set_data(x, y)
-    return line, title
-
+    
+    return scat, line, title
 ani = animation.FuncAnimation(fig, animate, frames=total_frames, interval=50, blit=True, repeat=False)
 plt.show()
 

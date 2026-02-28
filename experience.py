@@ -142,70 +142,83 @@
 import random
 import math
 
-# Константа скорости света (для пересчета, так как везде делим на 300000)
 C = 300000
 
-# Входные данные
 L = float(input("Введите начальную длину провода L: "))
 v = float(input("Введите начальную скорость первой точки v: "))
 
-# Список для хранения всех 6 массивов
+
 all_arrays = []
-
-# --- Шаг 2: Создание первого массива (7 точек, монотонно) ---
 first_array = []
-# Опорное значение: 2*(L/2)/300000 = L/300000
 base_value = L / C
-# Диапазон отклонения: от -10 до +10 метров в пересчете на время
-min_val = 2*(L-10)/C  # (L - 20)/C
-max_val = 2*(L+10)/C  # (L + 20)/C
+min_val = 2*(L-10)/C  
+max_val = 2*(L+10)/C  
 
-# Генерируем строго монотонно возрастающую последовательность
 for i in range(7):
     if i == 0:
-        # Первая точка может быть любой в диапазоне
         new_val = random.uniform(min_val, max_val)
     else:
-        # Каждая следующая точка должна быть БОЛЬШЕ предыдущей
         prev_val = first_array[i-1]
-        # Генерируем пока не получим число больше предыдущего
         while True:
             candidate = random.uniform(min_val, max_val)
             if candidate > prev_val:
                 new_val = candidate
                 break
-    first_array.append(round(new_val, 12))  # Округляем для читаемости
+    first_array.append(round(new_val, 12))  
 
 all_arrays.append(first_array)
 print(f"\nМассив 1 (из L): {first_array}")
 
-# --- Шаг 3: Создание второго массива (из первого + x) ---
 second_array = []
-for t in first_array:
-    # x случайно от (v/2)/300000 до (2*v)/300000  ← ИСПРАВЛЕНО!
-    x = random.uniform((2*v)/C, (4*v)/C)
-    second_array.append(round(t + x, 12))
+for i in range(7):
+    x = random.uniform((v/2)/C, (2*v)/C)  # свой x для каждой точки
+    second_array.append(round(L*2/C + x, 12))
 
 all_arrays.append(second_array)
-print(f"Массив 2 (1-й + x): {second_array}")
+print(f"\nМассив 2 (база {L*2/C:.12f} + x_i): {second_array}")
+lengths2 = [round(t * C / 2, 2) for t in second_array]
+print(f"  Длины 2 (м): {lengths2}")
 
-# --- Шаг 4: Создание массивов 3, 4, 5, 6 (последовательно) ---
-# Текущий массив для преобразований (начинаем со второго)
+# --- Массивы 3, 4, 5, 6 (из предыдущего + свой x для каждой точки) ---
 current_array = second_array
-
-for array_num in range(3, 7):  # номера 3, 4, 5, 6
+for array_num in range(3, 7):
     next_array = []
+    x_values = []  # для отладки
+    
     for val in current_array:
-        # x случайно от (v/2)/300000 до (2*v)/300000  ← ИСПРАВЛЕНО!
-        x = random.uniform((2*v)/C, (4*v)/C)
+        x = random.uniform((v/2)/C, (2*v)/C)  # свой x для каждой точки
+        x_values.append(x)
         next_array.append(round(val + x, 12))
     
     all_arrays.append(next_array)
-    print(f"Массив {array_num} (из {array_num-1} + x): {next_array}")
+    print(f"\nМассив {array_num} (+ x_i): {next_array}")
+    print(f"  Добавки x_i: {[round(x, 12) for x in x_values]}")
+    lengths = [round(t * C / 2, 2) for t in next_array]
+    print(f"  Длины (м): {lengths}")
     current_array = next_array
-
-# --- Шаг 5: Вывод результата ---
+if array_num == 3:
+    third_array = all_arrays[2]
+elif array_num == 4:
+    fourth_array = all_arrays[3]
+elif array_num == 5:
+    fifth_array = all_arrays[4]
+elif array_num == 6:
+    sixth_array = all_arrays[5]
 print("\n" + "="*40)
 print("ИТОГОВЫЕ 6 МАССИВОВ:")
 for idx, arr in enumerate(all_arrays, 1):
     print(f"Массив {idx}: {arr}")
+
+first_array = all_arrays[0] 
+second_array = all_arrays[1] 
+third_array = all_arrays[2] 
+fourth_array = all_arrays[3] 
+fifth_array = all_arrays[4] 
+sixth_array = all_arrays[5] 
+
+
+
+
+
+
+
