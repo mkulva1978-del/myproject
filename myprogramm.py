@@ -77,9 +77,6 @@ for array_idx in range(1, 6):
             colors.append('red')
     all_colors.append(colors)
     
-    print(f"Опасность для массива {array_idx+1}: {danger}")
-    print(f"Цвета для массива {array_idx+1}: {colors}")
-    print("-" * 30)
 
 #поиск графического описания границы
 #пусть 7 шнуров протянуты под углами 0, pi/12, pi/6, pi/4, pi/3, pi*5/12, pi/2
@@ -93,7 +90,7 @@ def radius_long(t2):
         radius.append(t*c / 2)
     return radius
 radiuses_value=radius_long(experience.all_arrays[0])
-print(radiuses_value)
+
 def border_coordinates(radiuses):
     x_coord=[]
     y_coord=[]
@@ -104,8 +101,6 @@ def border_coordinates(radiuses):
 
     return x_coord, y_coord
 border_x, border_y = border_coordinates(radiuses_value)
-print (border_x)
-print (border_y)
 
  
 
@@ -157,9 +152,6 @@ for i in range(5):
     all_points.append(new_set)
     
     
-   
-
-print(f"Создано наборов точек: {len(all_points)}")
 
 # Визуализируем все наборы точек для проверки
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
@@ -186,6 +178,19 @@ ax.grid(True, alpha=0.3)
 scat = ax.scatter([], [], c=[], s=100, edgecolors='black', linewidth=1.5, zorder=5)
 line, = ax.plot([], [], 'k-', linewidth=1.5, alpha=0.5, zorder=1)  
 title = ax.set_title('')
+
+from matplotlib.patches import Rectangle
+
+warning_rect = Rectangle((10, 10), 30, 10, 
+                         facecolor='red', alpha=0.7, 
+                         edgecolor='darkred', linewidth=2,
+                         visible=False, zorder=10)
+ax.add_patch(warning_rect)
+
+warning_text = ax.text(25, 15, '⚠ ОПАСНОСТЬ! ⚠', 
+                       ha='center', va='center',
+                       color='white', fontsize=12, fontweight='bold',
+                       visible=False, zorder=11)
 
 from matplotlib.patches import Patch
 legend_elements = [
@@ -218,12 +223,19 @@ def animate(frame):
     
     x = [p[0] for p in points]
     y = [p[1] for p in points]
+
+    
+    has_red = 'red' in current_colors
+    
+    
+    warning_rect.set_visible(has_red)
+    warning_text.set_visible(has_red)
     
     scat.set_offsets(np.c_[x, y])
     scat.set_color(current_colors)  
     line.set_data(x, y)
     
-    return scat, line, title
+    return scat, line, title, warning_rect, warning_text
 ani = animation.FuncAnimation(fig, animate, frames=total_frames, interval=50, blit=True, repeat=False)
 plt.show()
 
